@@ -1,2 +1,8 @@
-# T1MachineLearning
-Contains an implementation for T1 machine learning
+# T1Erminator #
+Contains an implementation for T1 machine learning.
+
+## Authors ##
+
+Kissan Mistry
+Nachiket Sherlekar
+Michal Kononenko
