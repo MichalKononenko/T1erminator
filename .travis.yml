@@ -11,6 +11,7 @@ before_install:
   - chmod +x miniconda.sh
   - ./miniconda.sh -b -p $HOME/miniconda
   - export PATH=$HOME/miniconda/bin:$PATH
+  - export PATH=$HOME/miniconda:$PATH
   - conda update --yes conda
   - git clone https://github.com/csferrie/python-qinfer.git
 
