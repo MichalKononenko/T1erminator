@@ -1,4 +1,4 @@
-sudo: false
+sudo: required
 language: python
 python:
   - "2.7"
@@ -20,9 +20,9 @@ install:
 
   # Install Qinfer from GitHub source
   - cd ./python-qinfer
-  - python setup.py install
-  - cd ..
+  - sudo python setup.py install
   - export PATH=./src/qinfer:$PATH
+  - cd ..
 
 script:
   - nosetests --with-coverage
