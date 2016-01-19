@@ -109,7 +109,7 @@ for idx_trials in xrange(trials):
 # SIMULATE*******************************************************
     # simulate outcomes- based on the true T1, and the chosen intial value
     # will be replaced by actual data collection from NMR for Mz values
-    sim_outcome = model.simulate_experiment(true_model,expparams)
+    sim_outcome = model.simulate_experiment(true_model, expparams)
     outcome = sim_outcome
     
     
@@ -136,7 +136,7 @@ for idx_trials in xrange(trials):
     weights = updater.particle_weights
     fig = plt.figure()
 
-    plt.axvline(updater.est_mean(), linestyle = '--', c='blue', linewidth=2)
+    plt.axvline(updater.est_mean(), linestyle='--', c='blue', linewidth=2)
     plt.axvline(true_model, linestyle='--', c='red', linewidth=2)
     plt.scatter(
             particles[:, 0], weights*10,
