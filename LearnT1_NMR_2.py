@@ -22,10 +22,14 @@ from matplotlib.backends.backend_pdf import PdfPages
 import time
 import Lorentzianfit as LF
 from qinfer.expdesign import ExperimentDesigner
+import logging
+
+log = logging.getLogger(__name__)
+log.setLevel(logging.DEBUG)
 
 
 model = FindT1Model()
-prior = UniformDistribution([0, 100])
+prior = UniformDistribution(np.array([0, 100]))
 N_particles=100000
 updater = SMCUpdater(model, N_particles, prior, resampler=LiuWestResampler(0.98),zero_weight_policy='reset')
 designer=ExperimentDesigner(updater,opt_algo=1)
@@ -60,7 +64,7 @@ save_mean=open(timestr+'_mean.txt','w')
 trials=20
 data = np.zeros((trials, 1), dtype=performance_dtype)
 for idx_trials in xrange(trials):
-    print 'trial: ' + str(idx_trials)
+    log.info('trial: ' + str(idx_trials))
     
 #CHOOSE EXPERIMENTAL PARAMETER****************************    
     guess_iter=50
@@ -82,7 +86,7 @@ for idx_trials in xrange(trials):
             expparams=guess
         risk_vec[idx_guess]=current_risk
         guess_vec[idx_guess]=guess
-    print 'Your Tau is: ' + str(expparams)
+    log.debug('Your Tau is: ' + str(expparams))
         
         #optimize that guess
 #        expparams=designer.design_expparams_field(guess,0,cost_scale_k=1,disp=False,maxiter=10000,maxfun=10000,store_guess=True,grad_h=1,)
