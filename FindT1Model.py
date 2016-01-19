@@ -11,6 +11,10 @@ from __future__ import division
 from qinfer.abstract_model import Model, Simulatable, DifferentiableModel
 from qinfer import ScoreMixin
 import numpy as np
+import logging
+
+log = logging.getLogger(__name__)
+log.setLevel(logging.DEBUG)
 
 
 class FindT1Model(ScoreMixin,DifferentiableModel):
