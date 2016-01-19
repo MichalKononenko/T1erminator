@@ -1,0 +1,35 @@
+sudo: required
+language: python
+python:
+  - "2.7"
+
+virtualenv:
+  system_site_packages: true
+
+notifications:
+  email: false
+
+before_install:
+  - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+  - chmod +x miniconda.sh
+  - ./miniconda.sh -b -p $HOME/miniconda
+  - export PATH=$HOME/miniconda/bin:$PATH
+  - export PATH=$HOME/miniconda:$PATH
+  - conda update --yes conda
+  - git clone https://github.com/csferrie/python-qinfer.git
+
+install:
+  - conda install --yes python=$TRAVIS_PYTHON_VERSION atlas numpy scipy matplotlib nose dateutil pandas statsmodels scikit-learn
+  - pip install -r requirements.txt
+
+  # Install Qinfer from GitHub source
+  - cd ./python-qinfer
+  - python setup.py install
+  - export PATH=./src/qinfer:$PATH
+  - cd ..
+
+script:
+  - nosetests --with-coverage
+
+after_success:
+  - coveralls
