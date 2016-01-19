@@ -25,7 +25,8 @@ install:
   # Install Qinfer from GitHub source
   - cd ./python-qinfer
   - pip freeze
-  - sudo python setup.py install
+  - sudo pip freeze
+  - python setup.py install
   - export PATH=./src/qinfer:$PATH
   - cd ..
 
