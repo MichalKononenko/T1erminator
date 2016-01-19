@@ -22,6 +22,10 @@ import time
 import Lorentzianfit as LF
 from qinfer.expdesign import ExperimentDesigner
 import os
+import logging
+
+log = logging.getLogger(__name__)
+log.setLevel(logging.DEBUG)
 
 model = FindT1Model()
 prior = UniformDistribution([0, 100])
@@ -65,7 +69,7 @@ save_var=open(Savestring+'_var.txt','w')
 trials=5
 data = np.zeros((trials, 1), dtype=performance_dtype)
 for idx_trials in xrange(trials):
-    print 'trial: ' + str(idx_trials)
+    log.debug('trial: ' + str(idx_trials))
     
 #CHOOSE EXPERIMENTAL PARAMETER****************************    
     guess_iter=10000
@@ -87,7 +91,7 @@ for idx_trials in xrange(trials):
             expparams=guess
         risk_vec[idx_guess]=current_risk
         guess_vec[idx_guess]=guess
-    print 'Your Tau is: ' + str(expparams)
+    log.debug('Your Tau is: ' + str(expparams))
         
         #optimize that guess
 #        expparams=designer.design_expparams_field(guess,0,cost_scale_k=1,disp=False,maxiter=10000,maxfun=10000,store_guess=True,grad_h=1,)
