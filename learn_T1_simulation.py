@@ -1,7 +1,7 @@
 """
 Created on Wed Jun 24 11:04:10 2015
 Learn T1 Simulation 
-T1 inversion recovery model defined in FindT1Model class 
+T1 inversion recovery model defined in find_T1_model class
 
 
 @author: Kissan Mistry
@@ -10,7 +10,7 @@ T1 inversion recovery model defined in FindT1Model class
 #imports and intializations
 from __future__ import division
 
-from FindT1Model import FindT1Model
+from find_T1_model import find_T1_model
 from qinfer.distributions import UniformDistribution
 #from qinfer.distributions import NormalDistribution
 from qinfer.smc import SMCUpdater
@@ -18,7 +18,7 @@ from qinfer.resamplers import LiuWestResampler
 import numpy as np
 import matplotlib.pyplot as plt
 
-model = FindT1Model()
+model = find_T1_model()
 prior = UniformDistribution([0, 1])
 N_particles=10000
 updater = SMCUpdater(model, N_particles, prior, resampler=LiuWestResampler(0.98),zero_weight_policy='reset')
