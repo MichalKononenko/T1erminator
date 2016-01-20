@@ -17,7 +17,7 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
-class find_T1_model(Score_Mixin,DifferentiableModel):
+class find_T1_model(ScoreMixin,DifferentiableModel):
     
      # We need to specify how many model parameters this model has.
     @property
