@@ -3,12 +3,9 @@ Created on Mon Jul 13 09:59:44 2015
 Find T1 Model
 models the inversion recovery scheme 
 has simulatable function 
- 
-
-@author: Kissan Mistry
 """
 from __future__ import division
-from qinfer.abstract_model import Model, Simulatable, DifferentiableModel
+from qinfer.abstract_model import Simulatable, DifferentiableModel
 from qinfer import ScoreMixin
 import numpy as np
 import logging
@@ -17,35 +14,89 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
-class FindT1Model(ScoreMixin,DifferentiableModel):
-    
-     # We need to specify how many model parameters this model has.
+class T1Model(ScoreMixin, DifferentiableModel):
+    """
+    Builds a model of the `inversion recovery sequence`_
+
+
+    .. _inversion recovery sequence:
+    """
+
     @property
     def n_modelparams(self):
-        return 1 # T1 is only model parameter 
-        #should learn the SNR or variance later 
-    
-    # The number of outcomes is always 2, so we indicate that it's constant
-    # and define the n_outcomes method to return that constant.
+        """
+        Overwrites the abstract property
+        :attr:`qinfer.abstract_model.DifferentiableModel.n_modelparams`. Since
+        T1 is the only model parameter, and this method returns the number of
+        model parameters. Therefore, the method returns 1
+
+        :return: The number of model parameters
+        :rtype: int
+        """
+        return 1
+
     @property
     def is_n_outcomes_constant(self):
+        """
+        This property is required and tells
+        :class:`qinfer.abstract_model.DifferentiableModel` whether to expect
+        the outcomes of each experiment to be constant. Since this is ``True``,
+        we simply have the function returning ``True``
+
+        :return: True
+        :rtype: bool
+        """
         return True
         
-    def n_outcomes(self, expparams):
-        #define how outcomes 
+    def n_outcomes(self, _):
+        """
+        Returns the number of outcomes that a given set of experiment
+        parameters will produce. Since the number of experiment outcomes is
+        constant, this function always returns ``2``. The empty parameter _
+        is used as a placeholder, in order to preserve the signature of
+        :meth:`qinfer.abstract_model.DifferentiableModel.n_outcomes`
+
+        :param _: An empty parameter used as a black hole for the expparams
+            list
+        :type _: any
+        :return: The expected number of outcomes (2)
+        :rtype: int
+        """
         return 2
-        
-    # Next, we denote that the experiment parameters are represented by a
-    # single field of 1 floats.
-    #CHECK THIS FOR VALIDITY
+
     @property
     def expparams_dtype(self):
+        """
+        This method returns the data type of the experiment parameters. In
+        our case, this is ``float``.
+
+        :return: ``'float'``
+        :rtype: str
+        """
         return 'float'
   
     def are_models_valid(self, modelparams):
-        return np.all(np.logical_and(modelparams > 0, modelparams <= 1), axis=1)
+        """
+        Required in :class:`qinfer.abstract_model.Simulatable` as a
+        validator to check whether the model parameters are valid.
+
+        :param numpy.ndarray modelparams: The model parameters to validate
+        :return: True if the models are valid, otherwise false
+        :rtype: bool
+        """
+        return np.all(
+                np.logical_and(modelparams > 0, modelparams <= 1), axis=1
+        )
         
     def simulate_experiment(self, modelparams, expparams, repeat=1):
+        """
+        Simulate an experiment within the model
+
+        :param modelparams:
+        :param expparams:
+        :param repeat:
+        :return:
+        """
     #simulate experiment and generate outcomes just adds guassian noise to the outcome of the model equation
         Simulatable.simulate_experiment(self, modelparams, expparams, repeat)
         mean, var = self._meanvar(modelparams, expparams)
@@ -76,7 +127,7 @@ class FindT1Model(ScoreMixin,DifferentiableModel):
         # Call the superclass method, which basically
         # just makes sure that call count diagnostics are properly
         # logged.
-        super(FindT1Model, self).likelihood(outcomes, modelparams, expparams)
+        super(T1Model, self).likelihood(outcomes, modelparams, expparams)
      
         mean, var = self._meanvar(modelparams, expparams)
         var=0.05

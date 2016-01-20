@@ -11,7 +11,7 @@ includes calls to run TOPSPIN commands- NMR experiment
 
 #imports and intializations
 from __future__ import division
-from FindT1Model import FindT1Model
+from T1Model import T1Model
 from qinfer.distributions import UniformDistribution
 #from qinfer.distributions import NormalDistribution
 from qinfer.smc import SMCUpdater
@@ -28,7 +28,7 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
-model = FindT1Model()
+model = T1Model()
 prior = UniformDistribution(np.array([0, 100]))
 N_particles=100000
 updater = SMCUpdater(model, N_particles, prior, resampler=LiuWestResampler(0.98),zero_weight_policy='reset')

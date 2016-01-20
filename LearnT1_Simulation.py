@@ -10,7 +10,7 @@ T1 inversion recovery model defined in FindT1Model class
 #imports and intializations
 from __future__ import division
 
-from FindT1Model import FindT1Model
+from T1Model import T1Model
 from qinfer.distributions import UniformDistribution
 #from qinfer.distributions import NormalDistribution
 from qinfer.smc import SMCUpdater
@@ -18,7 +18,7 @@ from qinfer.resamplers import LiuWestResampler
 import numpy as np
 import matplotlib.pyplot as plt
 
-model = FindT1Model()
+model = T1Model()
 prior = UniformDistribution([0, 1])
 N_particles=10000
 updater = SMCUpdater(model, N_particles, prior, resampler=LiuWestResampler(0.98),zero_weight_policy='reset')
