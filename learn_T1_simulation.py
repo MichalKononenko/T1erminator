@@ -10,7 +10,7 @@ T1 inversion recovery model defined in find_T1_model class
 #imports and intializations
 from __future__ import division
 
-from T1Model import T1Model
+from t1_model import T1Model
 from qinfer.distributions import UniformDistribution
 #from qinfer.distributions import NormalDistribution
 from qinfer.smc import SMCUpdater

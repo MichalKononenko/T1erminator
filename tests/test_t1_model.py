@@ -1,9 +1,8 @@
 """
-Contains unit tests for :mod:`FindT1Model`
+Contains unit tests for :mod:`t1_model`
 """
-from T1Model import T1Model
+from t1_model import T1Model
 import unittest
-import mock
 
 __author__ = 'Michal Kononenko'
 

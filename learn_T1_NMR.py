@@ -9,7 +9,7 @@ includes calls to run TOPSPIN commands- NMR experiment
 @author: Kissan Mistry 
 """
 from __future__ import division
-from T1Model import T1Model
+from t1_model import T1Model
 from qinfer.distributions import UniformDistribution
 from qinfer.smc import SMCUpdater
 from qinfer.resamplers import LiuWestResampler
