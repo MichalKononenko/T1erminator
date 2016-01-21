@@ -28,10 +28,3 @@ Project Management (Scrum) Board
 .. image:: https://badge.waffle.io/MichalKononenko/T1erminator.png?label=ready&title=Ready
    :target: https://waffle.io/MichalKononenko/T1erminator
    :alt: 'Stories in Ready'
-
-Code Climate Tools
-~~~~~~~~~~~~~~~~~~
-
-.. image:: https://codeclimate.com/github/MichalKononenko/T1erminator/badges/gpa.svg
-   :target: https://codeclimate.com/github/MichalKononenko/T1erminator
-   :alt: Code Climate

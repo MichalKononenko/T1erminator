@@ -1,7 +1,7 @@
 """
 Created on Wed Jun 24 11:04:10 2015
 Learn T1 NMR experiement run on TOPSPIN 
-T1 inversion recovery model defined in FindT1Model class 
+T1 inversion recovery model defined in find_T1_model class
 
 includes calls to run TOPSPIN commands- NMR experiment 
 
@@ -20,7 +20,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 import time
-import Lorentzianfit as LF
+import Lorentzian_fit as LF
 from qinfer.expdesign import ExperimentDesigner
 import logging
 
@@ -127,7 +127,7 @@ for idx_trials in xrange(trials):
 #Try getting quantity for Fisher Information and Score 
 #    score=model.score()
 ##    expparams=np.array([np.linspace(1, 10, 1000)])
-#    expparams=model.particle_guess_heuristic(updater,10000) #generate guess from PGH
+#    expparams=model.pgh(updater,10000) #generate guess from PGH
 #
 #    fisher=model.fisher_information(true_model,expparams)
 #   

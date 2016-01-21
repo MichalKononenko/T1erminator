@@ -18,7 +18,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 import time
-import Lorentzianfit as LF
+import Lorentzian_fit as LF
 from qinfer.expdesign import ExperimentDesigner
 import os
 import logging

@@ -1,7 +1,7 @@
 """
 Created on Wed Jun 24 11:04:10 2015
 Learn T1 NMR experiement run on TOPSPIN 
-T1 inversion recovery model defined in FindT1Model class 
+T1 inversion recovery model defined in find_T1_model class
 
 includes calls to run TOPSPIN commands- NMR experiment 
 
