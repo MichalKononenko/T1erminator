@@ -1,8 +1,7 @@
 """
 Created on Wed Jun 24 11:04:10 2015
 Learn T1 NMR experiement run on TOPSPIN 
-T1 inversion recovery model defined in find_T1_model class
-
+T1 inversion recovery model defined in FindT1Model class
 includes calls to run TOPSPIN commands- NMR experiment 
 
 @author: Kissan Mistry 
@@ -10,7 +9,7 @@ includes calls to run TOPSPIN commands- NMR experiment
 
 #imports and intializations
 from __future__ import division
-from find_T1_model import find_T1_model
+from t1_model import T1Model
 from qinfer.distributions import UniformDistribution
 #from qinfer.distributions import NormalDistribution
 from qinfer.smc import SMCUpdater
@@ -27,7 +26,7 @@ import logging
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
-model = find_T1_model()
+model = T1Model()
 prior = UniformDistribution([0, 100])
 N_particles=100000
 updater = SMCUpdater(model, N_particles, prior, resampler=LiuWestResampler(0.98),zero_weight_policy='reset')
@@ -81,7 +80,7 @@ for idx_trials in xrange(trials):
     for idx_guess in xrange(guess_iter):
 #        print 'guess iteration: '+ str(idx_guess)
         guess=np.array([[[0.01+(0.01*idx_guess)]]],dtype=model.expparams_dtype) #sweep guess/incremental increase 
-#        guess=np.array([model.pgh(updater,10000)],dtype=model.expparams_dtype ) #generate guess from PGH
+#        guess=np.array([model.particle_guess_heuristic(updater,10000)],dtype=model.expparams_dtype ) #generate guess from PGH
 #        print 'Your Guess is: '+ str(guess)
         #evaluate bayes risk for the guess
         current_risk=updater.bayes_risk(guess)

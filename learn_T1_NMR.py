@@ -9,7 +9,7 @@ includes calls to run TOPSPIN commands- NMR experiment
 @author: Kissan Mistry 
 """
 from __future__ import division
-from find_T1_model import find_T1_model
+from t1_model import T1Model
 from qinfer.distributions import UniformDistribution
 from qinfer.smc import SMCUpdater
 from qinfer.resamplers import LiuWestResampler
@@ -21,7 +21,7 @@ import logging
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
-model = find_T1_model()
+model = T1Model()
 prior = UniformDistribution(np.array([0, 10]))
 N_particles = 1000000
 updater = SMCUpdater(
@@ -70,7 +70,7 @@ for idx_trials in xrange(trials):
         # guess=np.array([[[0.0001+0.0001*idx_guess]]],
         # dtype=model.expparams_dtype )
         guess = np.array(
-                [model.pgh(updater, 10000)], dtype=model.expparams_dtype
+                [model.particle_guess_heuristic(updater, 10000)], dtype=model.expparams_dtype
         )
         # guess_risk=updater.bayes_risk(guess)
         log.info('Your Guess is: ' + str(guess))
