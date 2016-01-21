@@ -231,12 +231,3 @@ class T1Model(ScoreMixin, DifferentiableModel):
             cost=1
    
         return cost
-        
-        
-        
-        
-        
-        
-        
-        
-        
