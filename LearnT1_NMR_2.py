@@ -76,7 +76,7 @@ for idx_trials in xrange(trials):
     for idx_guess in xrange(guess_iter):
 #        print 'guess iteration: '+ str(idx_guess)
 #        guess=np.array([[[0.1+(0.1*idx_guess)]]],dtype=model.expparams_dtype) #sweep guess/incremental increase 
-        guess=np.array([model.pgh(updater,10000)],dtype=model.expparams_dtype ) #generate guess from PGH
+        guess=np.array([model.particle_guess_heuristic(updater, 10000)], dtype=model.expparams_dtype) #generate guess from PGH
 #        print 'Your Guess is: '+ str(guess)
         #evaluate bayes risk for the guess
         current_risk=updater.bayes_risk(guess)
@@ -108,7 +108,7 @@ for idx_trials in xrange(trials):
 #    designer.new_exp()
 #    for idx_guess in xrange(guess_iter):
 #        print 'guess iteration: '+ str(idx_guess)
-#        guess=np.array([model.pgh(updater,10000)],dtype=model.expparams_dtype )
+#        guess=np.array([model.particle_guess_heuristic(updater,10000)],dtype=model.expparams_dtype )
 #        guess_risk=updater.bayes_risk(guess)
 #        print 'Your Guess is: '+ str(guess)
 #        guess_vec[idx_guess]=guess
@@ -127,7 +127,7 @@ for idx_trials in xrange(trials):
 #Try getting quantity for Fisher Information and Score 
 #    score=model.score()
 ##    expparams=np.array([np.linspace(1, 10, 1000)])
-#    expparams=model.pgh(updater,10000) #generate guess from PGH
+#    expparams=model.particle_guess_heuristic(updater,10000) #generate guess from PGH
 #
 #    fisher=model.fisher_information(true_model,expparams)
 #   

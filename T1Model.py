@@ -16,11 +16,12 @@ log.setLevel(logging.DEBUG)
 
 class T1Model(ScoreMixin, DifferentiableModel):
     """
-    Builds a model of the `inversion recovery sequence`_
+    Builds a model of the `inversion recovery sequence`_ within the context of
+    Qinfer. This is used to simulate the sequence and determine T1.
 
-
-    .. _inversion recovery sequence:
+    .. _inversion recovery sequence: http://goo.gl/51FoSZ
     """
+    Equlibrium_Magnetization = 1
 
     @property
     def n_modelparams(self):
@@ -92,63 +93,102 @@ class T1Model(ScoreMixin, DifferentiableModel):
         """
         Simulate an experiment within the model
 
-        :param modelparams:
-        :param expparams:
-        :param repeat:
-        :return:
+        :param numpy.ndarray modelparams: The model parameters for which the
+            simulation is to be computed
+        :param numpy.ndarray expparams: The experiment parameters. The
+            likelihood function will be integrated over these parameters in
+            order to determine the likelihood as a function of the model
+            parameters.
+        :param int repeat: The number of times that the experiment should be
+            repeated. Defaults to 1
+        :return: The samples corresponding to the results of the simulation
+        :rtype: np.ndarray
+
+        .. todo::
+
+            The ``assert`` statement in the code is a simple sanity check to
+            make sure that the samples have the desired shape. We should
+            re-work this into
         """
-    #simulate experiment and generate outcomes just adds guassian noise to the outcome of the model equation
         Simulatable.simulate_experiment(self, modelparams, expparams, repeat)
         mean, var = self._meanvar(modelparams, expparams)
-#        print modelparams
+        log.debug('modelparams: %s' % modelparams)
         desired_shape = (repeat, modelparams.shape[0], expparams.shape[0])
         samples = np.random.randn(*desired_shape)
 
         samples = samples * np.sqrt(var) + mean
 
         assert samples.shape == desired_shape
-        
+
         return samples
- 
-#define element in class called Mo that is changeable when called from outside
-#used for normalization of the model and changes when called from outside for real nmr exp.          
-    Mo=1
     
     def _meanvar(self, modelparams, expparams):
+        """
+        Calculates the mean and variance of the model
+
+        :param modelparams: The model parameters
+        :param expparams: The experiment parameters
+        :return: The mean and variance of the model
+        :rtype: tuple
+        """
 #        modelparams = modelparams[..., np.newaxis] #this is the devil's line 
 #        var = 0.05 #SNR LOOK AT THIS VALUE
-        var=0.0005
-        Mz=self.Mo*(1-2*np.exp(-1*expparams/modelparams)) #the model
-        mean=Mz
+        var = 0.0005
+        z_magnetization = self.Equlibrium_Magnetization * (
+            1 - 2 * np.exp(-1 * expparams / modelparams)
+        )
+        mean = z_magnetization
         return mean, var     
-        
-    #Define Likelihood function    
+
     def likelihood(self, outcomes, modelparams, expparams):
-        # Call the superclass method, which basically
-        # just makes sure that call count diagnostics are properly
-        # logged.
+        """
+        Overwrites the likelihood function in
+        :class:`qinfer.abstract_model.Simulatable.likelihood`, returns the
+        likelihood of an outcome given a set of model parameters and
+        experiment parameters.
+
+        .. note::
+
+            The superclass method is called in this function in order to make
+            sure that the call count diagnostics are properly logged.
+
+        :param outcomes:
+        :param modelparams:
+        :param expparams:
+        :return:
+        """
         super(T1Model, self).likelihood(outcomes, modelparams, expparams)
      
         mean, var = self._meanvar(modelparams, expparams)
-        var=0.05
-        pr= (1/np.sqrt(2*np.pi*var))*np.exp(-((mean - outcomes) ** 2)/(2* var))
-        norm=np.max(pr)
-        pr=pr/norm
-  
-        return pr
-        
-# Custom particle guess heuristic, different from qinfer.PGH    
-    def pgh(self,updater,maxiters):
-        #draw two random T1 values from posterior/prior(if first) distribution
-       idy_iter=0
-       while idy_iter<maxiters: 
+
+        scale_factor = 1/np.sqrt(2*np.pi*var)
+        exponential = np.exp(-((mean-outcomes) ** 2)/(2 * var))
+
+        probability = scale_factor * exponential
+
+        norm = np.max(probability)
+
+        return probability/norm
+
+# Custom particle guess heuristic, different from qinfer.PGH
+    def particle_guess_heuristic(self, updater, maxiters):
+        """
+        In order to work with this model, a custom particle guess heuristic
+        needs to be written that is different from :`qinfer.PGH`
+
+        :param updater:
+        :param maxiters:
+        :return:
+        """
+        idy_iter = 0
+        while idy_iter < maxiters:
             idx_iter = 0
             while idx_iter < maxiters:
-                a=updater.sample()
+                a = updater.sample()
 #                while a>updater.est_mean():
 #                    a=updater.sample()
                 
-                b=updater.sample()
+                b = updater.sample()
 #                while b<updater.est_mean():
 #                    b=updater.sample()
                 if (a<updater.est_mean() and b>updater.est_mean())  or (a>updater.est_mean() and b<updater.est_mean()):
@@ -158,8 +198,8 @@ class T1Model(ScoreMixin, DifferentiableModel):
 #                    break
                 else:
                     idx_iter += 1
-            if np.abs(a-b) == 0:
-                raise RuntimeError("PGH did not find distinct particles in {} iterations.".format(self._maxiters))
+                if np.abs(a-b) == 0:
+                    raise RuntimeError("PGH did not find distinct particles in {} iterations.".format(self._maxiters))
                 
 #took analytical derivative of  difference of model evaluated at the sampled points Mz(a)-Mz(b)
 ## maximize the differece and use second derivative test to check if it is a local maxima. 
@@ -177,8 +217,8 @@ class T1Model(ScoreMixin, DifferentiableModel):
 # this method is not good 
 #            t=[1/np.linalg.norm((a-b),1,1)]
 #            print str(t)
-            break   
-       return t
+#            break
+#       return t
        
 #define cost function 
     def experiment_cost(self,expparams):

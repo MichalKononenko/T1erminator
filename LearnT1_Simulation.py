@@ -40,7 +40,7 @@ for idx_trials in xrange(trials):
     #Choose tau/experimental parameter 
     #choose tau=0 for first guess
     #expparams = np.array([0.0000001], dtype=model.expparams_dtype)
-    expparams =model.pgh(updater,10000)
+    expparams =model.particle_guess_heuristic(updater, 10000)
  
     #simulate outcomes- based on the true T1, and the chosen intial value 
     #will be replaced by actual data collection from NMR for Mz values

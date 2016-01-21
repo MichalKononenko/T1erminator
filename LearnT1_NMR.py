@@ -70,7 +70,7 @@ for idx_trials in xrange(trials):
         # guess=np.array([[[0.0001+0.0001*idx_guess]]],
         # dtype=model.expparams_dtype )
         guess = np.array(
-                [model.pgh(updater, 10000)], dtype=model.expparams_dtype
+                [model.particle_guess_heuristic(updater, 10000)], dtype=model.expparams_dtype
         )
         # guess_risk=updater.bayes_risk(guess)
         log.info('Your Guess is: ' + str(guess))

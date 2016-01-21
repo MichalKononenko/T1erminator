@@ -80,7 +80,7 @@ for idx_trials in xrange(trials):
     for idx_guess in xrange(guess_iter):
 #        print 'guess iteration: '+ str(idx_guess)
         guess=np.array([[[0.01+(0.01*idx_guess)]]],dtype=model.expparams_dtype) #sweep guess/incremental increase 
-#        guess=np.array([model.pgh(updater,10000)],dtype=model.expparams_dtype ) #generate guess from PGH
+#        guess=np.array([model.particle_guess_heuristic(updater,10000)],dtype=model.expparams_dtype ) #generate guess from PGH
 #        print 'Your Guess is: '+ str(guess)
         #evaluate bayes risk for the guess
         current_risk=updater.bayes_risk(guess)
