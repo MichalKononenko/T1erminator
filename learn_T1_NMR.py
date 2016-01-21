@@ -1,7 +1,7 @@
 """
 Created on Wed Jun 24 11:04:10 2015
 Learn T1 NMR experiement run on TOPSPIN 
-T1 inversion recovery model defined in FindT1Model class 
+T1 inversion recovery model defined in find_T1_model class
 
 includes calls to run TOPSPIN commands- NMR experiment 
 
@@ -9,7 +9,7 @@ includes calls to run TOPSPIN commands- NMR experiment
 @author: Kissan Mistry 
 """
 from __future__ import division
-from FindT1Model import FindT1Model
+from find_T1_model import find_T1_model
 from qinfer.distributions import UniformDistribution
 from qinfer.smc import SMCUpdater
 from qinfer.resamplers import LiuWestResampler
@@ -21,7 +21,7 @@ import logging
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
-model = FindT1Model()
+model = find_T1_model()
 prior = UniformDistribution(np.array([0, 10]))
 N_particles = 1000000
 updater = SMCUpdater(

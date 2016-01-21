@@ -6,7 +6,7 @@ Returns Integral of the peak
 """
 #########################################################################
 ####################### IMPORTING REQUIRED MODULES ######################
-def lorentzfit(title):
+def lorentz_fit(title):
     import numpy as np
     import pylab
     from scipy.optimize import leastsq # Levenberg-Marquadt Algorithm #

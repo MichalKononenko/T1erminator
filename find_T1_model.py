@@ -17,7 +17,7 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
-class FindT1Model(ScoreMixin,DifferentiableModel):
+class find_T1_model(ScoreMixin,DifferentiableModel):
     
      # We need to specify how many model parameters this model has.
     @property
@@ -76,7 +76,7 @@ class FindT1Model(ScoreMixin,DifferentiableModel):
         # Call the superclass method, which basically
         # just makes sure that call count diagnostics are properly
         # logged.
-        super(FindT1Model, self).likelihood(outcomes, modelparams, expparams)
+        super(find_T1_model, self).likelihood(outcomes, modelparams, expparams)
      
         mean, var = self._meanvar(modelparams, expparams)
         var=0.05
