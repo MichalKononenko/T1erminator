@@ -4,7 +4,8 @@ distribution
 """
 from abstract_distribution import AbstractDistribution
 from scipy import stats
-
+import numpy as np
+import abc
 __author__ = 'Michal Kononenko'
 
 
@@ -36,3 +37,20 @@ class UniformDistribution(AbstractDistribution):
     @property
     def mean(self):
         return self.distribution.mean()
+
+
+class AbstractDiscreteDistribution(AbstractDistribution):
+
+    @abc.abstractproperty
+    def independent_variable(self):
+        raise NotImplementedError
+
+    @abc.abstractproperty
+    def dependent_variable(self):
+        raise NotImplementedError
+
+    @property
+    def mean(self):
+        return np.mean(
+
+        )

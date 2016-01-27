@@ -60,3 +60,7 @@ target/
 
 # Pycharm-related files
 .idea
+
+
+#IPython Notebook caches
+.ipynb_checkpoints
