@@ -52,5 +52,5 @@ class AbstractDiscreteDistribution(AbstractDistribution):
     @property
     def mean(self):
         return np.mean(
-
+            self.independent_variable * self.dependent_variable
         )
