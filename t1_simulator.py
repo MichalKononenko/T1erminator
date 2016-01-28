@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.stats import norm
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
+from mpl_toolkits.mplot3d import axes3d
 
 __author__ = 'Michal Kononenko'
 
@@ -66,27 +66,28 @@ WEIGHTS = np.zeros([MONTE_CARLO_ITERATIONS, len(T1_VALUES)])
 #  set prior distributions
 PRIOR = np.ones(len(T1_VALUES)) / len(T1_VALUES)
 
-WEIGHTS[1, :] = PRIOR
+WEIGHTS[0, :] = PRIOR
 
-for index in range(MONTE_CARLO_ITERATIONS):
-    EXPECTED_TAU_VALUES[index] = np.mean(T1_VALUES * WEIGHTS[(index-1), :])
+for index in range(1, MONTE_CARLO_ITERATIONS):
+    EXPECTED_TAU_VALUES[index] = sum(T1_VALUES * WEIGHTS[(index-1), :])
     expected_t1_values[index] = EXPECTED_TAU_VALUES[index] / np.log(2)
     measured_polarizations[index] = noisy_model(expected_t1_values[index])
 
     for weight_index in range(len(T1_VALUES)):
         WEIGHTS[index, weight_index] = norm(
-                loc=noiseless_model(
-                        expected_t1_values[index], T1_VALUES[index]),
-                scale=NOISE_STDEV).pdf(measured_polarizations[index])
-
-    WEIGHTS[index, :] = WEIGHTS[index, :] / sum(WEIGHTS[index,:])
+                loc=noiseless_model(expected_t1_values[index], T1_VALUES[
+                    weight_index]),
+                scale=NOISE_STDEV).pdf(measured_polarizations[index]) * \
+                                       WEIGHTS[(index - 1), weight_index]
+    WEIGHTS[index, :] = WEIGHTS[index, :] / sum(WEIGHTS[index, :])
 
 #  Plotting
 
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 
-ax.plot_wireframe(T1_VALUES, range(MONTE_CARLO_ITERATIONS), WEIGHTS)
+X, Y = np.meshgrid(T1_VALUES, range(MONTE_CARLO_ITERATIONS))
+
+ax.plot_wireframe(X, Y, WEIGHTS)
 
 fig.show()
-pass
