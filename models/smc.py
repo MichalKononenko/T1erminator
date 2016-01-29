@@ -120,7 +120,7 @@ class T1Model(AbstractNoisyModel):
 
 
 class ExperimentalT1Model(AbstractNoisyModel):
-    def __init__(self, experiment_runner, noise=NullDistribution,
+    def __init__(self, experiment_runner, simulator, noise=NullDistribution,
                  minimum_polarization=-1,
                  maximum_polarization=1, number_of_discretization_points=1000
                  ):
@@ -132,6 +132,8 @@ class ExperimentalT1Model(AbstractNoisyModel):
             number_of_discretization_points
         )
 
+        self._sim = simulator
+
         self.call_count = 0
 
     def __call__(self, t1_candidates):
@@ -139,6 +141,10 @@ class ExperimentalT1Model(AbstractNoisyModel):
             return [self.runner.run(candidate) for candidate in t1_candidates]
         else:
             return self.runner.run(t1_candidates)
+
+    @property
+    def theoretical_model(self):
+        return T1Model(self._sim.mean_t1, noise=NullDistribution)
 
 
 class SequentialMonteCarlo(object):
