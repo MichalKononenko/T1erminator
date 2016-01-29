@@ -1,7 +1,11 @@
 import unittest
 from models import smc
 import numpy as np
+import logging
 __author__ = 'Michal Kononenko'
+
+log = logging.getLogger(__name__)
+log.setLevel(logging.DEBUG)
 
 
 class TestSMC(unittest.TestCase):

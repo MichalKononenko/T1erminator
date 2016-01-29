@@ -152,10 +152,10 @@ class SequentialMonteCarlo(object):
     Runs the SMC in an iterator
     """
     def __init__(self, model, parameter_space, weights,
-                 number_of_iterations=100):
+                 number_of_iterations=20):
 
         self.experimental_model = model
-        self.theoretical_model = model.theoretical_model
+        self.theoretical_model = lambda t, tau: -2 * np.exp(-t/tau) + 1
 
         self.parameter_space = parameter_space
 
@@ -186,13 +186,14 @@ class SequentialMonteCarlo(object):
 
         self._iteration += 1
 
-        test_value = self.measure()
+        mean_tau = self.mean_tau
+        measured_polarization = self.measure()
 
         for index in range(len(self.parameter_space)):
             weight_to_add = self._sampling_distribution(
-                self.mean_t1,
+                self.theoretical_model(mean_tau, self.parameter_space[index]),
                 self.experimental_model.noise.std
-            ).pdf(test_value) * self.weights[
+            ).pdf(measured_polarization) * self.weights[
                 index]
 
             self.weights[index] = weight_to_add
