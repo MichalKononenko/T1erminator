@@ -1,7 +1,7 @@
 """
 Contains abstractions for simulations
 """
-from abc import ABCMeta, abstractmethod
+from abc import ABCMeta, abstractmethod, abstractproperty
 __author__ = 'Michal Kononenko'
 
 __all__ = ['AbstractSystemModel', 'AbstractNoiseDistribution']

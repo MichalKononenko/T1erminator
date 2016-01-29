@@ -124,3 +124,58 @@ class NoisySingleSpinModel(SingleSpinModel):
             )
 
         return data + noise
+
+
+class SequentialMonteCarlo(object):
+    """
+    Runs the SMC algorithm
+    """
+    def __init__(self, model, parameter_space, prior,
+                 number_of_iterations=100):
+        self.experimental_model = model
+        self.prior = prior
+
+        self.theoretical_model = model
+        self.theoretical_model.noise = _NullNoiseDistribution()
+
+        self.parameter_space = parameter_space
+
+        self.expected_t1 = None
+
+        self.number_of_iterations = number_of_iterations
+
+        self.mean_tau = sum(self.parameter_space * self.prior)
+        self.mean_t1 = self.mean_tau / np.log(2)
+        self._iteration_number = 0
+        self.previous_distribution = None
+
+        self.measured_polarization = None
+
+        self.weights = np.zeros(len(self.parameter_space))
+
+    def __iter__(self):
+        return self
+
+    def next(self):
+        if self._iteration_number > self.number_of_iterations:
+            raise StopIteration
+        if self._iteration_number == 0:
+            self.previous_distribution = self.prior
+
+        self.mean_tau = sum(self.parameter_space * self.previous_distribution)
+        self.mean_t1 = self.mean_tau / np.log(2)
+
+        self.measured_polarization = self.experimental_model.evaluate(
+                self.mean_tau
+        )
+
+        for index in range(len(self.parameter_space)):
+            self.weights[index] = stats.norm(
+                loc=self.theoretical_model.evaluate(self.weights[index]),
+                scale=self.experimental_model.noise.std
+            ).pdf(self.measured_polarization) * self.previous_distribution[
+                index]
+
+            self.weights = self.weights / sum(self.weights)
+
+        self._iteration_number += 1
