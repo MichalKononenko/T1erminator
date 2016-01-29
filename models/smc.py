@@ -44,6 +44,14 @@ class GaussianDistribution(AbstractDistribution):
             len(list_to_sample) if hasattr(list_to_sample, '__len__') else 1
         )
 
+    @property
+    def mean(self):
+        return self.distribution.mean()
+
+    @property
+    def std(self):
+        return self.distribution.std()
+
 
 class AbstractNoisyModel(object):
     """
@@ -116,7 +124,7 @@ class SequentialMonteCarlo(object):
     Runs the SMC in an iterator
     """
     def __init__(self, model, parameter_space, weights,
-                 number_of_iterations=100, _iteration=0):
+                 number_of_iterations=100):
 
         self.experimental_model = model
         self.theoretical_model = model.theoretical_model
@@ -127,7 +135,7 @@ class SequentialMonteCarlo(object):
 
         self.number_of_iterations = number_of_iterations
 
-        self._iteration = _iteration
+        self._iteration = 0
 
     @property
     def mean_tau(self):
@@ -139,32 +147,30 @@ class SequentialMonteCarlo(object):
 
     @property
     def measured_polarization(self):
-        return self.experimental_model(self.mean_tau)
+        return self.theoretical_model(self.mean_t1)
 
     @staticmethod
     def _sampling_distribution(mean, stdev):
         return stats.norm(loc=mean, scale=stdev)
 
     def __next__(self):
-        if self._iteration > self.number_of_iterations:
-            raise StopIteration
+        if self._iteration >= self.number_of_iterations:
+            raise StopIteration()
 
         self._iteration += 1
 
-        new_iteration = self.__class__(
-            self.experimental_model, self.parameter_space, self.weights,
-            number_of_iterations=self.number_of_iterations,
-            _iteration=(self._iteration + 1)
-        )
-
         for index in range(len(self.parameter_space)):
-            new_iteration.weights[index] = self._sampling_distribution(
-                self.theoretical_model(new_iteration.weights[index]),
+            weight_to_add = self._sampling_distribution(
+                self.mean_t1,
                 self.experimental_model.noise.std
             ).pdf(self.measured_polarization) * self.weights[
                 index]
 
-        yield new_iteration
+            self.weights[index] = weight_to_add
+
+        self.weights = self.weights / sum(self.weights)
+
+        return self
 
     def __len__(self):
         return self.number_of_iterations
@@ -173,4 +179,4 @@ class SequentialMonteCarlo(object):
         return self
 
     def next(self):
-        yield self.__next__()
+        return self.__next__()
