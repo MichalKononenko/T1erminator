@@ -5,6 +5,7 @@ import numpy as np
 from scipy import stats
 from abc import ABCMeta, abstractmethod
 import logging
+from copy import deepcopy
 
 __author__ = 'Michal Kononenko'
 log = logging.getLogger(__name__)
@@ -115,11 +116,10 @@ class T1Model(AbstractNoisyModel):
 
     def __call__(self, t1_candidates):
         self.call_count += 1
+        length_of_data = len(t1_candidates) \
+            if hasattr(t1_candidates, '__len__') else 1
         return -2 * (np.exp(-t1_candidates/self.t1)) + \
-            np.ones(
-                len(t1_candidates)
-                if hasattr(t1_candidates, '__len__') else 1
-            )
+            np.ones(length_of_data) + self.noise.sample(length_of_data)
 
 
 class ExperimentalT1Model(AbstractNoisyModel):
@@ -158,7 +158,7 @@ class SequentialMonteCarlo(object):
                  number_of_iterations=20):
 
         self.experimental_model = model
-        self.theoretical_model = lambda t, tau: -2 * np.exp(-t/tau) + 1
+        self.theoretical_model = lambda t1, tau: -2 * np.exp(-tau/t1) + 1
 
         self.parameter_space = parameter_space
 
@@ -172,11 +172,11 @@ class SequentialMonteCarlo(object):
 
     @property
     def mean_tau(self):
-        return sum(self.parameter_space * self.weights)
+        return self.mean_t1 / np.log(2)
 
     @property
     def mean_t1(self):
-        return self.mean_tau / np.log(2)
+        return sum(self.parameter_space * self._previous_weights)
 
     def measure(self):
         return self.experimental_model(self.mean_t1)
@@ -190,17 +190,22 @@ class SequentialMonteCarlo(object):
             raise StopIteration()
 
         if self._iteration == 0:
-            self._previous_weights = self.weights
+            self._previous_weights = deepcopy(self.weights)
 
         self._iteration += 1
+        self._previous_weights = deepcopy(self.weights)
 
+
+        mean_t1 = self.mean_t1
         mean_tau = self.mean_tau
         measured_polarization = self.measure()
 
         for index in range(len(self.parameter_space)):
             weight_to_add = self._sampling_distribution(
-                self.theoretical_model(self.parameter_space[index], mean_tau),
-                self.experimental_model.noise.std
+                mean=self.theoretical_model(
+                        self.parameter_space[index], mean_tau
+                ),
+                stdev=self.experimental_model.noise.std
             ).pdf(measured_polarization) * self._previous_weights[
                 index]
 
@@ -208,7 +213,7 @@ class SequentialMonteCarlo(object):
 
         self.weights = self.weights / sum(self.weights)
 
-        return self
+        return deepcopy(self)
 
     def __len__(self):
         return self.number_of_iterations
