@@ -119,6 +119,28 @@ class T1Model(AbstractNoisyModel):
             )
 
 
+class ExperimentalT1Model(AbstractNoisyModel):
+    def __init__(self, experiment_runner, noise=NullDistribution,
+                 minimum_polarization=-1,
+                 maximum_polarization=1, number_of_discretization_points=1000
+                 ):
+        AbstractNoisyModel.__init__(self, noise)
+        self.runner = experiment_runner
+
+        self.polarizations = np.linspace(
+            minimum_polarization, maximum_polarization,
+            number_of_discretization_points
+        )
+
+        self.call_count = 0
+
+    def __call__(self, t1_candidates):
+        if isinstance(t1_candidates, np.ndarray):
+            return [self.runner.run(candidate) for candidate in t1_candidates]
+        else:
+            return self.runner.run(t1_candidates)
+
+
 class SequentialMonteCarlo(object):
     """
     Runs the SMC in an iterator
