@@ -4,8 +4,11 @@ Full implementation ready to go
 import numpy as np
 from scipy import stats
 from abc import ABCMeta, abstractmethod
+import logging
 
 __author__ = 'Michal Kononenko'
+log = logging.getLogger(__name__)
+log.setLevel(logging.DEBUG)
 
 
 class AbstractDistribution(object):
@@ -165,6 +168,8 @@ class SequentialMonteCarlo(object):
 
         self._iteration = 0
 
+        self._previous_weights = None
+
     @property
     def mean_tau(self):
         return sum(self.parameter_space * self.weights)
@@ -184,6 +189,9 @@ class SequentialMonteCarlo(object):
         if self._iteration >= self.number_of_iterations:
             raise StopIteration()
 
+        if self._iteration == 0:
+            self._previous_weights = self.weights
+
         self._iteration += 1
 
         mean_tau = self.mean_tau
@@ -191,9 +199,9 @@ class SequentialMonteCarlo(object):
 
         for index in range(len(self.parameter_space)):
             weight_to_add = self._sampling_distribution(
-                self.theoretical_model(mean_tau, self.parameter_space[index]),
+                self.theoretical_model(self.parameter_space[index], mean_tau),
                 self.experimental_model.noise.std
-            ).pdf(measured_polarization) * self.weights[
+            ).pdf(measured_polarization) * self._previous_weights[
                 index]
 
             self.weights[index] = weight_to_add
