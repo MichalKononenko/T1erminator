@@ -145,9 +145,8 @@ class SequentialMonteCarlo(object):
     def mean_t1(self):
         return self.mean_tau / np.log(2)
 
-    @property
-    def measured_polarization(self):
-        return self.theoretical_model(self.mean_t1)
+    def measure(self):
+        return self.experimental_model(self.mean_t1)
 
     @staticmethod
     def _sampling_distribution(mean, stdev):
@@ -159,11 +158,13 @@ class SequentialMonteCarlo(object):
 
         self._iteration += 1
 
+        test_value = self.measure()
+
         for index in range(len(self.parameter_space)):
             weight_to_add = self._sampling_distribution(
                 self.mean_t1,
                 self.experimental_model.noise.std
-            ).pdf(self.measured_polarization) * self.weights[
+            ).pdf(test_value) * self.weights[
                 index]
 
             self.weights[index] = weight_to_add

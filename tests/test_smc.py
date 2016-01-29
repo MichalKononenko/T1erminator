@@ -19,5 +19,6 @@ class TestSMC(unittest.TestCase):
         weights = [weight for weight in simulator]
 
         self.assertAlmostEqual(np.max(weights[-1].weights), 1, delta=5)
-
-        print(simulator.experimental_model.call_count)
+        self.assertEqual(simulator.experimental_model.call_count,
+                         simulator.number_of_iterations
+                         )
