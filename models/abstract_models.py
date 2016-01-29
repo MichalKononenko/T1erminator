@@ -4,6 +4,8 @@ Contains abstractions for simulations
 from abc import ABCMeta, abstractmethod
 __author__ = 'Michal Kononenko'
 
+__all__ = ['AbstractSystemModel', 'AbstractNoiseDistribution']
+
 
 class AbstractSystemModel(object):
     """
@@ -45,3 +47,18 @@ class AbstractNoiseModel(object):
     def add_noise(self, data):
         raise NotImplementedError
 
+
+class AbstractNoiseDistribution(object):
+
+    __metaclass__ = ABCMeta
+
+    @abstractmethod
+    def sample(self, list_to_sample):
+        """
+        Sample the noise distribution in order to obtain a list of random
+        variables corresponding to the noise
+
+        :param array-like or int list_to_sample:
+        :return:
+        """
+        raise NotImplementedError
