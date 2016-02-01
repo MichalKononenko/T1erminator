@@ -1,7 +1,5 @@
 import numpy as np
 from scipy.stats import norm
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import axes3d
 
 __author__ = 'Michal Kononenko'
 
@@ -80,14 +78,3 @@ for index in range(1, MONTE_CARLO_ITERATIONS):
                 scale=NOISE_STDEV).pdf(measured_polarizations[index]) * \
                                        WEIGHTS[(index - 1), weight_index]
     WEIGHTS[index, :] = WEIGHTS[index, :] / sum(WEIGHTS[index, :])
-
-#  Plotting
-
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
-
-X, Y = np.meshgrid(T1_VALUES, range(MONTE_CARLO_ITERATIONS))
-
-ax.plot_wireframe(X, Y, WEIGHTS)
-
-fig.show()
