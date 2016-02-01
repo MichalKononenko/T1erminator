@@ -23,25 +23,37 @@ N=100; %number of SQM iterations
 Ptest=zeros(N,1); %vector of measured polarizations
 Ttest=zeros(N,1); %vector of expectation of T1
 ttest=zeros(N,1); %vector of experimental parameters (tau)
+STDguess=ones(N,1);
 Td=linspace(2,3,100)'; %vector of T1 discritizations
+Risk=zeros(N,1);
 W=zeros(N, length(Td)); %matrix of weights
 W(1,:)=ones(length(Td),1)*1/length(Td);
 
 for j=2:N %iterating through SMC
-    
+
 Ttest(j)=expct(Td,W(j-1,:)');
 ttest(j)=Ttest(j)/log(2);
 Ptest(j)=Pn(ttest(j));
+Risk(j-1)=abs(TrueT1-Ttest(j));
+Pnew=P(ttest,Ttest(j));
+Per=Pnew-Ptest;
+STDguess(j)=std(Per(1:j));
 
-    for k=1:length(Td) %Updating weights 
-        W(j,k)=normpdf(Ptest(j),P(ttest(j),Td(k)),noiseSTD)*W(j-1,k); 
-    end 
+    for k=1:length(Td) %Updating weights
+        W(j,k)=normpdf(Ptest(j),P(ttest(j),Td(k)),STDguess(j))*W(j-1,k);
+    end
 W(j,:)=W(j,:)./sum(W(j,:));
 end
-
+Risk(end)=abs(TrueT1-Ttest(end));
 %plotting stuff because stuff needs to be plotted
-[X,Y]=meshgrid(Td,(1:N));
-surf(X,Y,W);
+h=1/100; %this controls which part of the data gets plotted
+[X,Y]=meshgrid(Td,(N*h:N));
+figure(4);
+surf(X,Y,W(N*h:end,:));
+figure(2);
+plot(1:N,Risk);
+figure(3);
+plot(STDguess);
 %this part is the real part, the one and only, the true t1erminator
 
 
