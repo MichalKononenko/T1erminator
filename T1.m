@@ -45,3 +45,4 @@ surf(X,Y,W);
 %this part is the real part, the one and only, the true t1erminator
 
 
+% t is tau, T is T1
