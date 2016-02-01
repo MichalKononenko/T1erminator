@@ -20,7 +20,4 @@ class TestNoisyModel(DerandomizedTestCase):
 
     def test_noise(self):
         result = t1_simulator.noisy_model(self.t, self.true_t1, self.noise)
-        print(result)
-
-        plt.plot(self.t, result)
-        plt.show()
+        self.assertIsNotNone(result)
